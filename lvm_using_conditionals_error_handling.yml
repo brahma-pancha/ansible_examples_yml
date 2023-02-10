@@ -1,0 +1,37 @@
+#Here's an example of an Ansible playbook that creates a logical volume using conditional execution and error handling:
+
+---
+- name: Create logical volume on managed nodes
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  vars:
+    vg_name: vg01
+    lv_name: lv01
+    lv_size: 10G
+
+  tasks:
+  - name: Check if volume group exists
+    shell: vgdisplay {{ vg_name }}
+    register: vg_check
+    ignore_errors: yes
+
+  - name: Create logical volume
+    lvcreate:
+      vg: "{{ vg_name }}"
+      name: "{{ lv_name }}"
+      size: "{{ lv_size }}"
+    when: vg_check.rc == 0
+    ignore_errors: yes
+
+  - name: Log error message if volume group does not exist
+    debug:
+      msg: "Error: Volume group {{ vg_name }} does not exist"
+    when: vg_check.rc != 0
+
+#In this playbook, the name of the volume group, the name of the logical volume, and the size of the logical volume are defined in the vars section using the vg_name, lv_name, and lv_size variables, respectively.
+
+#The first task uses the shell module to check if the volume group exists on the managed node. The output of the vgdisplay command is registered using the register keyword and stored in the vg_check variable. The ignore_errors keyword is used to ignore any errors that might occur when the volume group does not exist.
+
+#The second task uses the lvcreate module to create the logical volume. The when statement is used to check the return code (rc) of the vg_check variable, and the logical volume will only be created if the return code is 0, which indicates that the volume group exists. The ignore_errors

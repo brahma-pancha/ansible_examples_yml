@@ -1,0 +1,67 @@
+#Here's an example of an Ansible playbook that creates a new Logical Volume Manager (LVM) on a Linux system:
+
+- name: Create a new LVM
+  hosts: <host group>
+  become: yes
+  tasks:
+    - name: Create a physical volume
+      command: pvcreate /dev/<disk>
+      args:
+        creates: /dev/<disk>
+
+    - name: Create a volume group
+      command: vgcreate <volume group> /dev/<disk>
+
+    - name: Create a logical volume
+      command: lvcreate -L <size> -n <logical volume> <volume group>
+
+    - name: Create a file system
+      filesystem:
+        fstype: <file system>
+        dev: /dev/<volume group>/<logical volume>
+
+    - name: Show LVM information
+      command: lvs
+      register: result
+
+    - name: Display LVM information
+      debug:
+        var: result.stdout_lines
+
+#Where:
+#<host group> is the group of hosts you want to run the playbook on.
+#<disk> is the name of the disk you want to use for the LVM (e.g., sda).
+#<volume group> is the name of the volume group you want to create (e.g., vg0).
+#<logical volume> is the name of the logical volume you want to create (e.g., lv0).
+#<file system> is the type of file system you want to create on the logical volume (e.g., ext4).
+#<size> is the size of the logical volume (e.g., 10G).
+#This playbook will create a physical volume on the specified disk, create a volume group using the physical volume, create a logical volume with the specified size, and create a file system on the logical volume. The become directive allows the playbook to run with elevated privileges, as creating LVM typically requires administrator-level permissions. The creates directive for the pvcreate command ensures that the physical volume will only be created if it doesn't already exist. The playbook will also display information about the LVM using the lvs command.
+
+
+#Here's an example of an Ansible playbook that extends an existing Logical Volume Manager (LVM):
+- name: Extend an existing LVM
+  hosts: <host group>
+  become: yes
+  tasks:
+    - name: Extend the physical volume
+      command: pvresize /dev/<disk>
+
+    - name: Extend the volume group
+      command: vgextend <volume group> /dev/<disk>
+
+    - name: Extend the logical volume
+      command: lvextend -L +<size> /dev/<volume group>/<logical volume>
+
+    - name: Resize the file system
+      command: resize2fs /dev/<volume group>/<logical volume>
+
+    - name: Show LVM information
+      command: lvs
+      register: result
+
+    - name: Display LVM information
+      debug:
+        var: result.stdout_lines
+
+#Where:
+#<host group> is the group of hosts you want to run the playbook on.

@@ -1,0 +1,57 @@
+#Jinja2's loop statements allow you to repeat blocks of code multiple times, which can be useful for generating lists or tables in a template. The for loop and the with_items statement are two ways to achieve this.
+
+#Here's an example of using the for loop and the with_items statement in an Ansible playbook:
+
+---
+- name: Use Jinja2 loop statements in Ansible
+  hosts: all
+  become: yes
+  gather_facts: no
+  vars:
+    users:
+      - name: User 1
+        email: user1@example.com
+      - name: User 2
+        email: user2@example.com
+
+  tasks:
+  - name: Create a file with Jinja2 loop statement
+    copy:
+      content: |
+        {% for user in users %}
+        Name: {{ user.name }}
+        Email: {{ user.email }}
+
+        {% endfor %}
+      dest: /tmp/users.txt
+
+#In this playbook, a variable users is defined with a list of dictionaries representing users. The copy module is used to create a file at /tmp/users.txt with the content of a Jinja2 template.
+
+#The template contains a for loop that iterates over the users list and renders the name and email fields of each user.
+
+#You can also use the with_items statement in place of the for loop to achieve the same result:
+
+---
+- name: Use Jinja2 loop statements in Ansible
+  hosts: all
+  become: yes
+  gather_facts: no
+  vars:
+    users:
+      - name: User 1
+        email: user1@example.com
+      - name: User 2
+        email: user2@example.com
+
+  tasks:
+  - name: Create a file with Jinja2 loop statement
+    copy:
+      content: |
+        {% for user in users %}
+        Name: {{ user.name }}
+        Email: {{ user.email }}
+
+        {% endfor %}
+      dest: /tmp/users.txt
+
+#Note: You can use the for loop and with_items statement along with other Jinja2 features, such as conditionals and filters, to create complex and dynamic templates in Ansible.

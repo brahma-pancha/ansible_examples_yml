@@ -1,0 +1,31 @@
+#Here's an example of an Ansible playbook that creates partitions on a Linux system using the parted command:
+
+- name: Create partitions
+  hosts: <host group>
+  become: yes
+  tasks:
+    - name: Create a partition
+      command: parted /dev/<disk> mkpart primary <file system> <start> <end>
+      args:
+        creates: /dev/<partition>
+
+    - name: Create a file system
+      filesystem:
+        fstype: <file system>
+        dev: /dev/<partition>
+
+    - name: Show partition information
+      command: parted /dev/<disk> print
+      register: result
+
+    - name: Display partition information
+      debug:
+        var: result.stdout_lines
+
+#Where:
+#Host group> is the group of hosts you want to run the playbook on.
+#<disk> is the name of the disk you want to partition (e.g., sda).
+#<partition> is the name of the partition you want to create (e.g., sda1).
+#<file system> is the type of file system you want to create on the partition (e.g., ext4).
+#<start> and <end> are the start and end positions of the partition, respectively (e.g., 10GB and 20GB).
+#This playbook will create a partition on the specified disk and create a file system on the partition. The become directive allows the playbook to run with elevated privileges, as creating partitions typically requires administrator-level permissions. The creates directive for the parted command ensures that the partition will only be created if it doesn't already exist. The playbook will also display information about the partition using the parted command.

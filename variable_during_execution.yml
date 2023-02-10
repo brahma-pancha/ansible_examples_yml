@@ -1,0 +1,17 @@
+#Here is an example of an Ansible playbook that sets variables during execution using the set_fact module:
+
+---
+- name: Set variables during playbook execution
+  hosts: localhost
+  tasks:
+    - name: Set a variable with the current date
+      set_fact:
+        current_date: "{{ lookup('pipe','date') }}"
+
+    - name: Display the value of the current_date variable
+      debug:
+        var: current_date
+
+#In this example, the set_fact module is used to set the value of the current_date variable to the current date of the system running the playbook. The value is obtained using the lookup function, which is used to execute shell commands. The debug module is then used to display the value of the current_date variable, showing that it was successfully set during playbook execution.
+
+#This example demonstrates how the set_fact module can be used to set variables during playbook execution, allowing you to use dynamic information in your playbooks and tasks.

@@ -1,0 +1,11 @@
+#You can set a variable during Ansible ad hoc command execution using the -e or --extra-vars option. This option allows you to pass variables directly to the Ansible command, without having to specify them in a playbook or configuration file.
+
+#Here's an example of using the -e option to set a variable during ad hoc command execution:
+
+ansible all -i hosts -m debug -a "var=my_variable" -e "my_variable='Hello, World!'"
+
+#In this example, the -i option is used to specify the inventory file, hosts, and the -m option is used to specify the module to run, debug. The -a option is used to specify the arguments for the module, in this case, the variable var=my_variable. Finally, the -e option is used to set the value of the my_variable variable to Hello, World!.
+
+#When this command is executed, Ansible will run the debug module on all systems in the inventory, displaying the value of the my_variable variable, which was set during ad hoc command execution.
+
+#This demonstrates how you can use the -e option to pass variables to an ad hoc command, allowing you to execute commands with dynamic information.

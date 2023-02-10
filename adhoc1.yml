@@ -1,0 +1,18 @@
+#Here's an example of an ad-hoc Ansible command that creates a file, sets its permissions, and copies content to it
+
+ansible <host group> -i <inventory file> -m copy -a "src=<source file> dest=<destination file> mode=<file mode>"
+ansible <host group> -i <inventory file> -m file -a "dest=<destination file> state=touch mode=<file mode>"
+
+#Where:
+
+#<host group> is the group of hosts you want to run the command on
+#<inventory file> is the path to your Ansible inventory file
+#<source file> is the path to the file you want to copy
+#<destination file> is the path to the file you want to create
+#<file mode> is the file permission you want to set in octal format (e.g. 644 for read and write permissions for owner and read for others)
+#For example:
+
+ansible webservers -i inventory.ini -m copy -a "src=index.html dest=/var/www/html/index.html mode=644"
+ansible webservers -i inventory.ini -m file -a "dest=/var/www/html/index.html state=touch mode=644"
+
+#This will create the file /var/www/html/index.html on the webservers host group, set its permissions to 644, and copy the contents of the file index.html to it.

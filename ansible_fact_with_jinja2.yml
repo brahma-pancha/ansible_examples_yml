@@ -1,0 +1,13 @@
+#Here's an example of accessing a fact using a Jinja2 expression in an Ansible playbook:
+
+---
+- name: Access facts in a playbook
+  hosts: localhost
+  tasks:
+    - name: Display the hostname of the system
+      debug:
+        msg: "The hostname of the system is {{ ansible_hostname }}"
+
+          #In this example, the debug module is used to display a message containing the hostname of the system, which is stored in the ansible_hostname fact. The ansible_hostname fact is accessed using a Jinja2 expression, {{ ansible_hostname }}, which is evaluated at runtime and replaced with the value of the fact.
+
+          #You can access any of the facts gathered by Ansible in this same way, using Jinja2 expressions in your playbooks and templates. This allows you to use dynamic information in your playbooks, making them more flexible and powerful.

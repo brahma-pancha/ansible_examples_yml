@@ -1,0 +1,55 @@
+#Here's an example of an Ansible playbook to archive a directory and compress it using gzip, bzip2, and xz:
+
+- name: Archive directory and compress with gzip, bzip2, and xz
+  hosts: <host group>
+  tasks:
+    - name: Archive directory with gzip
+      archive:
+        path: <directory to archive>
+        format: gz
+        dest: <destination file>.tar.gz
+
+    - name: Archive directory with bzip2
+      archive:
+        path: <directory to archive>
+        format: bz2
+        dest: <destination file>.tar.bz2
+
+    - name: Archive directory with xz
+      archive:
+        path: <directory to archive>
+        format: xz
+        dest: <destination file>.tar.xz
+
+#Where:
+
+          #<host group> is the group of hosts you want to run the playbook on
+          #<directory to archive> is the path to the directory you want to archive
+          #<destination file> is the base name of the archive file you want to create
+          #
+
+#For example:
+
+- name: Archive directory and compress with gzip, bzip2, and xz
+  hosts: webservers
+  tasks:
+    - name: Archive directory with gzip
+      archive:
+        path: /var/www/html
+        format: gz
+        dest: /var/backups/html.tar.gz
+
+    - name: Archive directory with bzip2
+      archive:
+        path: /var/www/html
+        format: bz2
+        dest: /var/backups/html.tar.bz2
+
+    - name: Archive directory with xz
+      archive:
+        path: /var/www/html
+        format: xz
+        dest: /var/backups/html.tar.xz
+
+
+#This playbook will archive the directory /var/www/html and compress it using gzip, bzip2, and xz, creating the files /var/backups/html.tar.gz, /var/backups/html.tar.bz2, and /var/backups/html.tar.xz respectively on the webservers host group.

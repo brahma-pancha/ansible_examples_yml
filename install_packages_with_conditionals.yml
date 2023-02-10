@@ -1,0 +1,26 @@
+#You can use a conditional statement in an Ansible playbook to install packages on managed nodes based on certain conditions. Here's an example of using the when statement to install packages based on the value of the ansible_os_family magic variable:
+
+---
+- name: Install packages on managed nodes
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+  - name: Install the Apache web server
+    yum:
+      name: httpd
+      state: present
+    when: ansible_os_family == "RedHat"
+
+  - name: Install the Apache2 web server
+    apt:
+      name: apache2
+      state: present
+    when: ansible_os_family == "Debian"
+
+#In this playbook, two tasks are defined to install the Apache web server. The first task uses the yum module to install the httpd package on Red Hat-based systems, and the second task uses the apt module to install the apache2 package on Debian-based systems.
+
+#The when statement in each task checks the value of the ansible_os_family magic variable and installs the appropriate package based on the value of the ansible_os_family magic variable. If the value of the ansible_os_family magic variable is RedHat, the httpd package will be installed; if the value is Debian, the apache2 package will be installed.
+
+#This playbook demonstrates how to use conditional statements in Ansible to install packages on managed nodes based on certain conditions. You can use the same approach to install other packages or perform other actions based on different conditions.

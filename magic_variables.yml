@@ -1,0 +1,49 @@
+#Magic variables in Ansible are special variables that provide information about the state of the system and the environment in which the playbook is being executed. They are a useful tool for making playbooks more dynamic and customizable.
+
+#Here are some examples of using magic variables in Ansible playbooks:
+
+---
+- name: Use magic variables in Ansible
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+  - name: Create a file with the hostname
+    copy:
+      content: |
+        Host: {{ inventory_hostname }}
+        FQDN: {{ ansible_fqdn }}
+        OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+      dest: /tmp/hostinfo.txt
+
+- name: Use magic variables in conditionals
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+  - name: Install the Apache web server
+    yum:
+      name: httpd
+      state: present
+    when: ansible_os_family == "RedHat"
+
+- name: Use magic variables in loops
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+  - name: Display network interfaces
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ ansible_interfaces }}"
+
+#In the first example, the copy module is used to create a file at /tmp/hostinfo.txt with the content of a Jinja2 template. The template uses magic variables such as inventory_hostname, ansible_fqdn, ansible_distribution, and ansible_distribution_version to display information about the host.
+
+#In the second example, the yum module is used to install the Apache web server. The when statement checks the value of the ansible_os_family magic variable and installs the Apache web server only when the value is RedHat.
+
+#In the third example, the debug module is used to display information about the network interfaces. The loop statement uses the ansible_interfaces magic variable, which provides a list of network interfaces, and the debug module displays the name of each network interface.
+
+#These are just a few examples of how magic variables can be used in Ansible playbooks. There are many other magic variables available in Ansible, and you can find a comprehensive list of them in the Ansible documentation.

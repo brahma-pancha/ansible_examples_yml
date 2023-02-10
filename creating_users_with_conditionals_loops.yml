@@ -1,0 +1,48 @@
+#Here's an example of an Ansible playbook that creates multiple users on managed nodes using a combination of conditional statements and loop statements:
+
+---
+- name: Create users on managed nodes
+  hosts: all
+  become: yes
+
+  vars:
+    users:
+      - name: user1
+        state: present
+        groups:
+          - sudo
+        uid: 1001
+      - name: user2
+        state: present
+        groups:
+          - admin
+        uid: 1002
+      - name: user3
+        state: absent
+        uid: 1003
+
+  tasks:
+  - name: Create or delete users
+    user:
+      name: "{{ item.name }}"
+      state: "{{ item.state }}"
+      uid: "{{ item.uid }}"
+      groups: "{{ item.groups }}"
+      append: yes
+    loop: "{{ users }}"
+    when: item.state == "present"
+
+  - name: Remove users
+    user:
+      name: "{{ item.name }}"
+      state: "{{ item.state }}"
+    loop: "{{ users }}"
+    when: item.state == "absent"
+
+#In this playbook, a list of users is defined in the vars section using the users variable. The list includes three users with different properties such as name, state, groups, and uid.
+
+#The first task uses the user module to create or delete users based on the value of the state variable. The loop statement is used to loop through the users list and the when statement is used to check if the value of the state variable is present. If the value of the state variable is present, the user module will create the user; if the value is absent, the user module will delete the user.
+
+#The second task uses the user module to delete users that have the state value set to absent. The loop statement is used to loop through the users list and the when statement is used to check if the value of the state variable is absent.
+
+#This playbook demonstrates how to create multiple users on managed nodes using a combination of conditional statements and loop statements. You can modify the playbook to include additional user properties, or use it as a template to create playbooks to perform other user-related tasks.

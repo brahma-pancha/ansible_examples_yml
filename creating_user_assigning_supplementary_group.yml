@@ -1,0 +1,35 @@
+#Here's an example of an Ansible playbook that creates a user and adds a supplementary group:
+
+---
+- name: Create user and add supplementary group using Ansible
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Create the user
+    user:
+      name: new_user
+      state: present
+      groups: wheel
+
+  - name: Add supplementary group
+    user:
+      name: new_user
+      groups: supplementary_group
+      append: yes
+
+  - name: Verify the groups of the user
+    command: id new_user
+    register: user_result
+
+  - name: Display the groups of the user
+    debug:
+      var: user_result.stdout_lines
+
+    #This playbook will:
+    #Create a new user new_user and add it to the wheel group using the user module
+    #Add the new_user to a supplementary group supplementary_group using the user module with the append option set to yes
+    #Verify the groups the user belongs to using the id command and store the result in the user_result variable
+    #Display the output of the id command in a readable format using the debug module.
+
+    #Note: Replace the values of name, groups, and supplementary_group with your desired values.

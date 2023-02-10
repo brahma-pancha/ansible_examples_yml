@@ -1,0 +1,35 @@
+#Here's an example of an Ansible playbook that configures the firewall using the firewalld service on Red Hat Enterprise Linux (RHEL) systems:
+
+- name: Configure firewall with firewalld
+  hosts: <host group>
+  become: yes
+  tasks:
+    - name: Ensure firewalld is running
+      service:
+        name: firewalld
+        state: started
+
+    - name: Add a permanent rule to allow SSH
+      firewalld:
+        service: ssh
+        permanent: yes
+        state: enabled
+
+    - name: Add a permanent rule to allow HTTP
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+
+    - name: Show firewall rules
+      command: firewall-cmd --list-all
+      register: result
+
+    - name: Display firewall rules
+      debug:
+        var: result.stdout_lines
+
+#Where:
+
+#<host group> is the group of hosts you want to run the playbook on.
+#This playbook will ensure that the firewalld service is running, add permanent firewall rules to allow incoming SSH and HTTP traffic, and display the current firewall rules. The become directive allows the playbook to run with elevated privileges, as configuring the firewall typically requires administrator-level permissions.

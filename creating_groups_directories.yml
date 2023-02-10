@@ -1,0 +1,25 @@
+#Here's an example of an Ansible playbook that creates groups and directories on a Linux system:
+
+- name: Create groups and directories
+  hosts: <host group>
+  become: yes
+  tasks:
+    - name: Create a group
+      group:
+        name: <group name>
+        state: present
+
+    - name: Create a directory
+      file:
+        path: <directory path>
+        state: directory
+        owner: <username>
+        group: <group name>
+        mode: 0775
+
+#Where:
+#<host group> is the group of hosts you want to run the playbook on.
+#<group name> is the name of the group you want to create.
+#<directory path> is the path to the directory you want to create.
+#<username> is the username that should own the directory.
+#This playbook will create a group and a directory on the specified host group. The become directive allows the playbook to run with elevated privileges, as creating groups and directories typically requires administrator-level permissions. The mode directive sets the permissions for the directory to 0775, allowing the owner and group to have read, write, and execute permissions, and others to have read and execute permissions.

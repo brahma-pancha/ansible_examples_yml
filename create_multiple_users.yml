@@ -1,0 +1,22 @@
+#Here is an example Ansible playbook that creates multiple users and resets their passwords:
+
+---
+- name: Create multiple users and reset password
+  hosts: all
+  become: yes
+  tasks:
+  - name: Create users
+    user:
+      name: "{{ item.username }}"
+      password: "{{ item.password | password_hash('sha512') }}"
+      state: present
+    loop:
+      - { username: 'user1', password: 'pass1' }
+      - { username: 'user2', password: 'pass2' }
+      - { username: 'user3', password: 'pass3' }
+
+        #This playbook uses the user module to create multiple users. The loop keyword is used to loop through a list of dictionaries that contains the username and password for each user. The password for each user is hashed using the sha512 algorithm, which is more secure than storing the password in clear text.
+
+#The become: yes directive is used to run the playbook with root privileges, which is necessary for creating new users.
+
+  #Note: This playbook does not specify the home directory for each user. By default, Ansible will use the default home directory for new users, which is typically /home/username.

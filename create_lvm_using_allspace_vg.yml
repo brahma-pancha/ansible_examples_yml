@@ -1,0 +1,26 @@
+#Here is an example of a playbook that creates a Logical Volume Manager (LVM) using all the free space in a Volume Group (VG) in Ansible:
+
+- name: Create LVM using all free space
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Get VG name and free space
+      shell: vgs --noheadings --units m --separator ";" | awk -F ";" '{print $1, $7}'
+      register: vg_free_space
+
+    - name: Create LVM
+      lvol:
+        vg: "{{ item.0 }}"
+        lv: "{{ item.1 }}"
+        size: "{{ item.2 }}"
+      with_together:
+        - "{{ vg_free_space.stdout_lines }}"
+        - [ "lv_data" ]
+        - [ "{{ item.1 }}" ]
+      when: "{{ item.0 }} == 'vg_name'"
+
+        #In the above playbook, we first gather the VG name and free space using the vgs command. The output of the command is then parsed to extract the required information. The lvol module is then used to create the LVM, using all the free space in the VG named "vg_name". The name of the LVM is specified as "lv_data".
+
+#Note that this is just an example, and you will need to modify the playbook to match your specific requirements, such as the name of your VG, the name of the LVM, etc.

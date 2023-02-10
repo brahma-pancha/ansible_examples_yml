@@ -1,0 +1,70 @@
+#Here's an example of an Ansible playbook that schedules a job to run at a specific time using the at command:
+
+- name: Schedule job with at
+  hosts: <host group>
+  tasks:
+    - name: Schedule job to run at a specific time
+      command: echo "your_command" | at <time>
+      register: result
+
+    - name: Display job information
+      debug:
+        var: result.stdout_lines
+
+#Where:
+ #<host group> is the group of hosts you want to run the playbook on
+#<time> is the time when you want the job to run, specified in the format HH:MM, HH:MM PM, or HH:MM AM
+#your_command is the command you want to run as the scheduled job
+
+#For example:
+
+- name: Schedule job with at
+  hosts: webservers
+  tasks:
+    - name: Schedule job to run at a specific time
+      command: echo "sudo reboot" | at 11:30 PM
+      register: result
+
+    - name: Display job information
+      debug:
+        var: result.stdout_lines
+#This playbook will schedule the command sudo reboot to run at 11:30 PM on the webservers host group.
+
+
+#Here's another example of an Ansible playbook that schedules a recurring job using cron:
+
+- name: Schedule recurring job with cron
+  hosts: <host group>
+  tasks:
+    - name: Add cron job
+      cron:
+        name: "Your Job"
+        special_time: "<cron expression>"
+        job: "<your_command>"
+      register: result
+
+    - name: Display job information
+      debug:
+        var: result
+
+#Where:
+#<host group> is the group of hosts you want to run the playbook on
+#<cron expression> is the cron expression specifying the schedule of the job
+#<your_command> is the command you want to run as the recurring job
+#
+#For example:
+- name: Schedule recurring job with cron
+  hosts: webservers
+  tasks:
+    - name: Add cron job
+      cron:
+        name: "Backup Website"
+        special_time: "0 0 * * *"
+        job: "sudo tar -cvzf /var/backups/html-$(date +\%Y\%m\%d).tar.gz /var/www/html"
+      register: result
+
+    - name: Display job information
+      debug:
+        var: result
+
+#This playbook will add a cron job to the crontab on the webservers host group, which runs the command sudo tar -cvzf /var/backups/html-$(date +\%Y\%m\%d).tar.gz /var/www/html every day at midnight.

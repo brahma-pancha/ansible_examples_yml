@@ -1,0 +1,80 @@
+#Here are some examples of multiple Ansible playbooks that utilize variables:
+
+#1. Installing packages on multiple systems:
+
+---
+- name: Install packages on multiple systems
+  hosts: all
+  become: yes
+  vars:
+    packages:
+      - nginx
+      - mysql
+      - php
+  tasks:
+    - name: Install packages
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ packages }}"
+    
+#In this example, the packages variable is defined in the vars section, and contains a list of packages that should be installed on all systems. The package task uses the with_items directive to loop over the items in the packages list, installing each package on the target systems.
+
+#2. Configuring a database server:
+
+---
+- name: Configure a database server
+  hosts: database-server
+  become: yes
+  vars:
+    database_root_password: secret_password
+  tasks:
+    - name: Install MySQL server
+      package:
+        name: mysql-server
+        state: present
+    - name: Set root password for MySQL server
+      mysql_user:
+        name: root
+        password: "{{ database_root_password }}"
+        host: localhost
+        login_user: root
+        login_password: ""
+        check_implicit_admin: yes
+    - name: Create a database
+      mysql_db:
+        name: my_database
+        state: present
+        login_user: root
+        login_password: "{{ database_root_password }}"
+
+#In this example, the database_root_password variable is defined in the vars section, and is used to set the root password for the MySQL server. The tasks install the MySQL server, set the root password, and create a database on the target system. 
+
+#3. Deploying a web application:
+
+---
+- name: Deploy a web application
+  hosts: web-server
+  become: yes
+  vars:
+    web_app_path: /var/www/my_web_app
+    web_app_repo: https://github.com/my_username/my_web_app.git
+  tasks:
+    - name: Install dependencies
+      package:
+        name:
+          - git
+          - python3-pip
+        state: present
+    - name: Clone web application repository
+      git:
+        repo: "{{ web_app_repo }}"
+        dest: "{{ web_app_path }}"
+    - name: Install web application dependencies
+      pip:
+        name: -r requirements.txt
+        requirements: "{{ web_app_path }}/requirements.txt"
+
+#In this example, the web_app_path and web_app_repo variables are defined in the vars section, and are used to specify the location of the web application on the target system and the repository containing the application code. The tasks install the dependencies, clone the repository, and install the dependencies required by the web application.
+
+#These examples demonstrate how variables can be used in Ansible playbooks to manage the configuration of target systems in a flexible and organized manner.

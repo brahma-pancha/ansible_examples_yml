@@ -1,0 +1,31 @@
+#jinja2 is a popular templating engine used in Ansible. It allows you to use variables and perform operations in your playbooks and templates, making them more dynamic and reusable. Jinja2 filters are used to modify or manipulate the output of a variable in a Jinja2 template.
+
+#Here's an example of how to use Jinja2 templating and filters in an Ansible playbook:
+
+---
+- name: Use Jinja2 templating and filters in Ansible
+  hosts: all
+  become: yes
+  gather_facts: no
+  vars:
+    message: "Hello, {{ username }}!"
+    username: "User"
+
+  tasks:
+  - name: Create a file with Jinja2 templating
+    copy:
+      content: "{{ message }}"
+      dest: /tmp/message.txt
+
+  - name: Create a file with Jinja2 filters
+    copy:
+      content: "{{ username|capitalize }}"
+      dest: /tmp/username.txt
+
+#In this playbook, two variables message and username are defined with the values "Hello, {{ username }}!" and "User" respectively.
+
+#The first task uses the copy module to create a file at /tmp/message.txt with the content Hello, User!. The {{ message }} variable is evaluated and replaced with its value before being written to the file.
+
+#The second task creates a file at /tmp/username.txt with the content User, but the username variable is passed through a Jinja2 filter capitalize to convert the first letter to uppercase.
+
+#You can use many other Jinja2 filters, such as lower, upper, default, and length, to modify the output of a variable in a Jinja2 template.

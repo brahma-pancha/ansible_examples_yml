@@ -1,0 +1,31 @@
+#Here is an example of a playbook that mounts an LVM persistently, using conditionals in Ansible:
+
+- name: Mount LVM persistently
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Check if LVM is already mounted
+      shell: df -h | awk '{print $6}' | grep "/mnt"
+      register: lvm_mount_check
+
+    - name: Mount LVM
+      mount:
+        path: "/mnt"
+        src: "/dev/vg_name/lv_data"
+        fstype: "ext4"
+        state: mounted
+      when: lvm_mount_check.rc != 0
+
+    - name: Add entry to /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        line: "/dev/vg_name/lv_data /mnt ext4 defaults 0 0"
+      when: lvm_mount_check.rc != 0
+
+        #In the above playbook, we first check if the LVM is already mounted by using the df command and checking the output for the "/mnt" mount point. The result of this check is stored in the lvm_mount_check variable.
+
+#If the LVM is not mounted, the mount module is used to mount the LVM at the "/mnt" mount point, with a file system type of "ext4". Additionally, an entry is added to the /etc/fstab file to ensure that the LVM is mounted persistently across reboots.
+
+#Note that this is just an example, and you will need to modify the playbook to match your specific requirements, such as the name of your VG, the name of the LVM, the mount point, etc.

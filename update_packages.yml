@@ -1,0 +1,23 @@
+#Here's an example of an Ansible playbook that updates packages on Red Hat Enterprise Linux (RHEL) systems using the yum package manager:
+
+- name: Update packages with yum
+  hosts: <host group>
+  become: yes
+  tasks:
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Display the list of updated packages
+      command: yum list updates
+      register: result
+
+    - name: Show updated packages
+      debug:
+        var: result.stdout_lines
+
+#Where:
+
+#<host group> is the group of hosts you want to run the playbook on.
+#This playbook will update all packages on the specified host group and display the list of updated packages. The become directive allows the playbook to run with elevated privileges, as updating packages typically requires administrator-level permissions.

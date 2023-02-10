@@ -1,0 +1,36 @@
+#Here's an example of an Ansible playbook that creates a volume group on managed nodes using a conditional statement:
+
+---
+- name: Create volume group on managed nodes
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  vars:
+    vg_name: vg01
+    pv_device: /dev/sdb
+
+  tasks:
+  - name: Check if physical volume exists
+    shell: ls -l {{ pv_device }}
+    register: pv_check
+
+  - name: Create physical volume
+    pvcreate:
+      dev: "{{ pv_device }}"
+    when: pv_check.rc != 0
+
+  - name: Create volume group
+    vgcreate:
+      vg: "{{ vg_name }}"
+      pv: "{{ pv_device }}"
+
+#In this playbook, the name of the volume group and the physical volume device are defined in the vars section using the vg_name and pv_device variables, respectively.
+
+#The first task uses the shell module to check if the physical volume exists on the managed node. The output of the ls command is registered using the register keyword and stored in the pv_check variable.
+
+#The second task uses the pvcreate module to create the physical volume on the managed node. The when statement is used to check the return code (rc) of the pv_check variable, and the physical volume will only be created if the return code is not 0, which indicates that the physical volume does not exist.
+
+#The third task uses the vgcreate module to create the volume group. The name of the volume group and the physical volume device are passed as parameters to the vgcreate module.
+
+#This playbook demonstrates how to use a conditional statement in Ansible to create a volume group on managed nodes. You can modify the playbook to include additional steps or use it as a template to create playbooks to perform other storage-related tasks.

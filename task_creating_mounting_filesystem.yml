@@ -1,0 +1,41 @@
+#Here's an example of an Ansible playbook for creating and mounting a file system in Linux:
+
+---
+- name: Create and Mount Filesystem using Ansible
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Create the file system
+    command: |
+      sudo fallocate -l 10G /var/new_fs
+      sudo mkfs.ext4 /var/new_fs
+
+  - name: Mount the file system
+    mount:
+      path: /mnt/new_mount_point
+      src: /var/new_fs
+      fstype: ext4
+      state: mounted
+
+  - name: Add entry in /etc/fstab
+    lineinfile:
+      dest: /etc/fstab
+      line: /var/new_fs /mnt/new_mount_point ext4 defaults 0 0
+      state: present
+
+  - name: Check the mounted file system
+    command: df -h
+    register: df_result
+
+  - name: Display the mounted file system
+    debug:
+      var: df_result.stdout_lines
+        
+#This playbook will:
+#Create a new 10 GB file system in /var/new_fs using the fallocate and mkfs.ext4 commands
+#Mount the newly created file system at /mnt/new_mount_point
+#Add an entry in /etc/fstab to mount the file system automatically during system boot
+#Check if the file system has been successfully mounted and display the result using the df command
+#Use the debug module to display the output of the df command in a readable format.
+#Note: Replace the values of path, src, and line with your desired values.
