@@ -1,0 +1,41 @@
+#Ansible Vaults are a feature in Ansible that allow you to encrypt sensitive information, such as passwords or secret keys, within your playbook. This helps to keep sensitive information secure and prevent accidental exposure, especially when sharing playbooks or committing them to version control systems.
+
+#Here is an example of using an Ansible Vault in a playbook:
+
+#Create the encrypted data file:
+
+$ ansible-vault create secrets.yml
+
+$ ansible-vault edit secrets.yml
+
+#The contents of the secrets.yml file might look like this:
+
+---
+secret_key: secret_value
+password: secret_password
+
+#In your playbook, you can reference the encrypted data by using the vault_identifier option:
+
+- name: Example playbook using Ansible Vault
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - secrets.yml
+  vars:
+    vault_identifier: secrets
+
+  tasks:
+    - name: Display secret key
+      debug:
+        msg: "The secret key is: {{ secret_key }}"
+
+    - name: Display password
+      debug:
+        msg: "The password is: {{ password }}"
+
+
+#When running the playbook, you will be prompted for the password used to encrypt the secrets file:
+
+$ ansible-playbook example_playbook.yml --ask-vault-pass
+
+#Note that the above example uses a password to encrypt the secrets file. You can also use a key file, if preferred. Additionally, you can specify the password or key file on the command line using the --vault-password-file option.

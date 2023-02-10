@@ -1,0 +1,92 @@
+#Create a new directory for the role using the standard directory structure. For example:
+
+$ mkdir -p ~/roles/configure_apache/{defaults,tasks,files}
+
+#Create the defaults/main.yml file and add the default values for variables used in the role. For example:
+
+---
+# defaults/main.yml
+
+apache_version: 2.4
+
+#Create the tasks/main.yml file and add the tasks for installing and configuring Apache. For example:
+
+---
+# tasks/main.yml
+
+- name: Install Apache
+  become: yes
+  apt:
+    name: apache2
+    state: present
+    update_cache: yes
+
+- name: Copy Apache Configuration
+  copy:
+    src: apache.conf
+    dest: /etc/apache2/apache2.conf
+  notify:
+    - restart apache
+
+- name: Start Apache
+  become: yes
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Create Document Root Directory
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0755
+
+- name: Create Sample Index File
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+
+#Create the files/apache.conf file and add the Apache configuration. For example:
+
+# files/apache.conf
+
+Listen 80
+
+<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/html
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+#    Create the files/index.html file and add the sample index file. For example:
+
+# files/index.html
+
+<html>
+  <head>
+    <title>Welcome to Apache</title>
+  </head>
+  <body>
+    <h1>Welcome to Apache</h1>
+    <p>Apache is up and running.</p>
+  </body>
+</html>
+
+#    Test the role by including it in a playbook and running the playbook. For example:
+
+---
+# test.yml
+
+- name: Test Apache Configuration
+  hosts: all
+  roles:
+    - configure_apache
+
+#      You can now run the playbook using the following command:
+
+$ ansible-playbook test.yml
+
+#This example demonstrates how to install Apache, configure it, and start it. You can modify the tasks and configuration to meet your specific requirements.

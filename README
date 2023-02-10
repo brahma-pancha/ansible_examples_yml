@@ -28,3 +28,278 @@ In conclusion, host_vars and group_vars are useful tools for managing variables 
 3. Ansible facts are information gathered about the systems you are managing with Ansible. They include details such as the operating system, IP addresses, memory information, and much more. Ansible automatically gathers this information and makes it available to you in the form of variables that you can access in your playbooks and templates.
 
 Facts can be accessed in your playbooks and templates using Jinja2 expressions. A Jinja2 expression is a string that is surrounded by double curly braces, {{ }}, and contains a variable or expression.
+
+
+
+ROLES - 
+
+The directory structure of an Ansible role is a standard structure that allows Ansible to automatically discover and use the role in playbooks. Here's the recommended directory structure of an Ansible role:
+
+myrole/
+|-- defaults
+|   |-- main.yml
+|-- files
+|-- handlers
+|   |-- main.yml
+|-- meta
+|   |-- main.yml
+|-- tasks
+|   |-- main.yml
+|-- templates
+|-- tests
+|   |-- inventory
+|   |-- test.yml
+|-- vars
+|   |-- main.yml
+
+Pardhu Marella
+create lvm using all free space on vg in playbook
+
+Here is an example of a playbook that creates a Logical Volume Manager (LVM) using all the free space in a Volume Group (VG) in Ansible:
+
+yaml
+- name: Create LVM using all free space
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Get VG name and free space
+      shell: vgs --noheadings --units m --separator ";" | awk -F ";" '{print $1, $7}'
+      register: vg_free_space
+
+    - name: Create LVM
+      lvol:
+        vg: "{{ item.0 }}"
+        lv: "{{ item.1 }}"
+        size: "{{ item.2 }}"
+      with_together:
+        - "{{ vg_free_space.stdout_lines }}"
+        - [ "lv_data" ]
+        - [ "{{ item.1 }}" ]
+      when: "{{ item.0 }} == 'vg_name'"
+
+In the above playbook, we first gather the VG name and free space using the vgs command. The output of the command is then parsed to extract the required information. The lvol module is then used to create the LVM, using all the free space in the VG named "vg_name". The name of the LVM is specified as "lv_data".
+
+Note that this is just an example, and you will need to modify the playbook to match your specific requirements, such as the name of your VG, the name of the LVM, etc.
+Pardhu Marella
+mounting lvm persistently using conditionals in playbook
+
+Here is an example of a playbook that mounts an LVM persistently, using conditionals in Ansible:
+
+yaml
+- name: Mount LVM persistently
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Check if LVM is already mounted
+      shell: df -h | awk '{print $6}' | grep "/mnt"
+      register: lvm_mount_check
+
+    - name: Mount LVM
+      mount:
+        path: "/mnt"
+        src: "/dev/vg_name/lv_data"
+        fstype: "ext4"
+        state: mounted
+      when: lvm_mount_check.rc != 0
+
+    - name: Add entry to /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        line: "/dev/vg_name/lv_data /mnt ext4 defaults 0 0"
+      when: lvm_mount_check.rc != 0
+
+In the above playbook, we first check if the LVM is already mounted by using the df command and checking the output for the "/mnt" mount point. The result of this check is stored in the lvm_mount_check variable.
+
+If the LVM is not mounted, the mount module is used to mount the LVM at the "/mnt" mount point, with a file system type of "ext4". Additionally, an entry is added to the /etc/fstab file to ensure that the LVM is mounted persistently across reboots.
+
+Note that this is just an example, and you will need to modify the playbook to match your specific requirements, such as the name of your VG, the name of the LVM, the mount point, etc.
+Pardhu Marella
+jinja2 if statement examples
+
+Jinja2 is a popular templating language used in Ansible. It provides a way to perform conditional statements within templates. Here are some examples of using if statements in Jinja2:
+
+    Check if a variable is defined:
+
+python
+{% if variable is defined %}
+  The variable is defined.
+{% else %}
+  The variable is not defined.
+{% endif %}
+
+    Check if a variable has a specific value:
+
+php
+{% if variable == 'value' %}
+  The variable has the value 'value'.
+{% else %}
+  The variable does not have the value 'value'.
+{% endif %}
+
+    Check if a list contains a specific item:
+
+php
+{% if 'item' in list %}
+  The list contains the item 'item'.
+{% else %}
+  The list does not contain the item 'item'.
+{% endif %}
+
+    Check if a dictionary contains a specific key:
+
+vbnet
+{% if 'key' in dictionary %}
+  The dictionary contains the key 'key'.
+{% else %}
+  The dictionary does not contain the key 'key'.
+{% endif %}
+
+Note that these are just a few examples, and you can use Jinja2 if statements in many other ways to perform different types of conditional checks.
+Pardhu Marella
+ansible vaults with example
+
+Ansible Vaults are a feature in Ansible that allow you to encrypt sensitive information, such as passwords or secret keys, within your playbook. This helps to keep sensitive information secure and prevent accidental exposure, especially when sharing playbooks or committing them to version control systems.
+
+Here is an example of using an Ansible Vault in a playbook:
+
+    Create the encrypted data file:
+
+lua
+$ ansible-vault create secrets.yml
+
+    Edit the encrypted data file:
+
+ruby
+$ ansible-vault edit secrets.yml
+
+    The contents of the secrets.yml file might look like this:
+
+yaml
+---
+secret_key: secret_value
+password: secret_password
+
+    In your playbook, you can reference the encrypted data by using the vault_identifier option:
+
+yaml
+- name: Example playbook using Ansible Vault
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - secrets.yml
+  vars:
+    vault_identifier: secrets
+
+  tasks:
+    - name: Display secret key
+      debug:
+        msg: "The secret key is: {{ secret_key }}"
+
+    - name: Display password
+      debug:
+        msg: "The password is: {{ password }}"
+
+    When running the playbook, you will be prompted for the password used to encrypt the secrets file:
+
+python
+$ ansible-playbook example_playbook.yml --ask-vault-pass
+
+Note that the above example uses a password to encrypt the secrets file. You can also use a key file, if preferred. Additionally, you can specify the password or key file on the command line using the --vault-password-file option.
+Pardhu Marella
+creating encrypted file using ansible vault command line
+
+Here's how you can create an encrypted file using the Ansible Vault command-line tool:
+
+    Open a terminal or command prompt.
+
+    Change to the directory where you want to create the encrypted file.
+
+    Run the following command:
+
+lua
+$ ansible-vault create filename.yml
+
+Replace "filename.yml" with the name of the encrypted file you want to create.
+
+    You will be prompted to enter a password to encrypt the file. Enter a password and confirm it.
+
+    The Ansible Vault will open an editor for you to enter the data you want to encrypt. Enter the data and save it.
+
+    You can now run playbooks that reference the encrypted file. When running a playbook, you'll be prompted for the password to decrypt the data.
+
+    To edit an encrypted file, run the following command:
+
+ruby
+$ ansible-vault edit filename.yml
+
+Replace "filename.yml" with the name of the encrypted file you want to edit.
+
+    You'll be prompted for the password to decrypt the data. Enter the password and the file will open in an editor.
+
+Note that it's important to keep the password used to encrypt the file safe, as it's the only way to access the encrypted data. You can also use a password file instead of a password to encrypt and decrypt data, if preferred.
+Pardhu Marella
+ansible role directory structure and creating a role from playbook
+
+The directory structure of an Ansible role is a standard structure that allows Ansible to automatically discover and use the role in playbooks. Here's the recommended directory structure of an Ansible role:
+
+lua
+myrole/
+|-- defaults
+|   |-- main.yml
+|-- files
+|-- handlers
+|   |-- main.yml
+|-- meta
+|   |-- main.yml
+|-- tasks
+|   |-- main.yml
+|-- templates
+|-- tests
+|   |-- inventory
+|   |-- test.yml
+|-- vars
+|   |-- main.yml
+
+The purpose of each directory is as follows:
+
+    defaults: This directory contains default variables for the role. The main.yml file contains the default values for variables used in the role.
+
+    files: This directory contains files that need to be transferred to the remote host.
+
+    handlers: This directory contains handlers, which are similar to tasks, but are only executed when notified by another task.
+
+    meta: This directory contains metadata about the role, such as the role's name, author, and dependencies.
+
+    tasks: This directory contains the main playbook tasks for the role.
+
+    templates: This directory contains templates that can be used to generate configuration files.
+
+    tests: This directory contains tests for the role, including an inventory file and a test playbook.
+
+    vars: This directory contains variables used by the role. The main.yml file contains the variables used in the role.
+
+To create a role from a playbook, follow these steps:
+
+    Create a new directory for the role using the standard directory structure.
+
+    Copy the tasks from the playbook into the tasks/main.yml file in the role directory.
+
+    Copy any files referenced in the tasks into the files directory.
+
+    Copy any templates referenced in the tasks into the templates directory.
+
+    Copy any variables referenced in the tasks into the vars/main.yml file in the role directory.
+
+    If the playbook uses any variables that are not already defined in the role, add them to the defaults/main.yml file.
+
+    If the playbook uses any handlers, copy them into the handlers/main.yml file in the role directory.
+
+    Add metadata about the role to the meta/main.yml file, such as the role's name, author, and dependencies.
+
+    Test the role by including it in a playbook and running the playbook.
+
+Once you have created the role, you can reuse it in multiple playbooks, which can simplify and streamline your playbook development.
