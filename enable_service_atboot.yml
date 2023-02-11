@@ -1,0 +1,11 @@
+#Here's an example of how you can start and enable the chronyd.service NTP server on a RedHat Enterprise Linux 8 system:
+
+- name: Start and enable chronyd.service
+  systemd:
+    name: chronyd.service
+    state: started
+    enabled: yes
+
+      #In this example, the systemd module is used to start and enable the chronyd.service NTP server. The name argument specifies the name of the service, and the state and enabled arguments are set to started and yes, respectively, to start and enable the service on boot.
+
+#Note that the systemd module requires that the systemd command line tools are installed on the remote host.

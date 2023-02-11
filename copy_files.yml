@@ -1,0 +1,11 @@
+#You can use the fetch module in Ansible to copy files from remote hosts to your local system. Here's an example of how you can copy the /var/log/messages file from a managed host to your local system:
+
+- name: Copy /var/log/messages from remote host to local system
+  fetch:
+    src: /var/log/messages
+    dest: /path/to/local/destination
+    flat: yes
+
+#In this example, the fetch module is used to copy the /var/log/messages file from the remote host to your local system. The src argument specifies the source file on the remote host, and the dest argument specifies the destination directory on your local system. The flat argument is set to yes so that the file will be copied directly into the destination directory, rather than preserving its directory structure.
+
+#Note that you need to have the necessary permissions to access the file on the remote host, and the destination directory on your local system must be writable.

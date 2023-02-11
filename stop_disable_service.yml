@@ -1,0 +1,20 @@
+#You can use the service module in Ansible to manage services on remote hosts. To stop and disable a service from starting on boot, you can use the following steps:
+
+#Stop the service if it is running:
+
+- name: Stop the service
+  service:
+    name: service_name
+    state: stopped
+
+#Disable the service from starting on boot:
+
+  
+- name: Disable the service on boot
+  service:
+    name: service_name
+    enabled: no
+      
+#Replace service_name with the actual name of the service you want to manage. This will stop the service if it is running and disable it from starting on boot on the remote host.
+
+#Note that the exact way to disable a service from starting on boot can vary depending on the operating system being used. On some systems, you may need to use a different module, such as systemd or systemctl, to achieve this.

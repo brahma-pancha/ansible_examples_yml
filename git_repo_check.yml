@@ -1,0 +1,11 @@
+#You can use the git module in Ansible to checkout a Git repository over SSH. Here's an example:
+
+- name: Checkout Git repository over SSH
+  git:
+    repo: git@github.com:user/repo.git
+    dest: /path/to/repo
+    key_file: /path/to/ssh_key
+
+#In this example, the git module is used to checkout the repository located at git@github.com:user/repo.git. The dest argument specifies the destination directory on the remote host where the repository will be checked out, and the key_file argument specifies the path to the SSH private key that will be used to authenticate with the Git repository.
+
+#Note that you need to have the necessary SSH key set up and configured on the remote host in order to checkout the repository over SSH. You can use the authorized_key module in Ansible to manage SSH keys on the remote host, if needed.

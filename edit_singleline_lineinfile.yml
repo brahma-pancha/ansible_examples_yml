@@ -1,0 +1,11 @@
+#You can use the lineinfile module in Ansible to edit a single line of text in a file. Here's an example that customizes the "sshd_config" file:
+
+- name: Edit single line text in ssh_config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#PasswordAuthentication yes'
+    line: 'PasswordAuthentication no'
+
+#This task first specifies the path of the file to be edited, /etc/ssh/sshd_config. Then, it uses the regexp argument to match the line in the file that starts with #PasswordAuthentication yes. Finally, it uses the line argument to replace the matched line with PasswordAuthentication no.
+
+#Note that this task assumes that the line in the file starts with #PasswordAuthentication yes. If the line is different in your file, you should modify the regexp argument accordingly.

@@ -1,0 +1,39 @@
+#Here's an example of how you can use the blockinfile module in Ansible to manage blocks of text in a file:
+
+- name: Insert block of text into file
+  blockinfile:
+    path: /etc/nginx/nginx.conf
+    block: |
+      # block of text
+      server {
+          listen 80;
+          server_name example.com;
+          location / {
+              root /usr/share/nginx/html;
+              index index.html index.htm;
+          }
+      }
+    insertbefore: '# block of text'
+
+#In this example, the blockinfile module is used to insert a block of text into the /etc/nginx/nginx.conf file. The block of text to be inserted is defined within the block argument, which uses the YAML literal block scalar syntax (|).
+
+#The insertbefore argument specifies the location where the block of text should be inserted. In this case, it's '# block of text', so the block of text will be inserted before the first line in the file that starts with # block of text.
+
+#If you want to update an existing block of text in the file, you can use the marker argument instead of insertbefore, e.g.
+
+- name: Update block of text in file
+  blockinfile:
+    path: /etc/nginx/nginx.conf
+    block: |
+      # block of text
+      server {
+          listen 80;
+          server_name example.com;
+          location / {
+              root /usr/share/nginx/html;
+              index index.html index.htm;
+          }
+      }
+    marker: '# block of text'
+
+#In this example, the marker argument specifies the string that separates the block of text in the file. If a block of text with the specified marker exists, it will be replaced with the new block of text defined in the block argument. If the block does not exist, it will be inserted into the file.

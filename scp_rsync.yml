@@ -1,0 +1,24 @@
+#Here's an example of how you can use the copy module in Ansible to copy a file using scp:
+
+- name: Copy file using SCP
+  copy:
+    src: /path/to/local/file
+    dest: user@remotehost:/path/to/remote/destination
+    protocol: scp
+    extra_opts: -o StrictHostKeyChecking=no
+      
+#In this example, the copy module is used to copy a local file to a remote host using scp. The src argument specifies the source file on your local system, and the dest argument specifies the destination file on the remote host. The protocol argument is set to scp to specify that the file should be copied using scp. The extra_opts argument is used to pass additional options to scp, in this case, disabling strict host key checking.
+
+#Here's an example of how you can use the synchronize module in Ansible to copy files using rsync:
+
+
+- name: Copy files using rsync
+  synchronize:
+    src: /path/to/local/files
+    dest: user@remotehost:/path/to/remote/destination
+    rsync_opts:
+      - "--delete"
+      - "--exclude=*.tmp"
+    delete: yes
+
+#In this example, the synchronize module is used to copy a directory of local files to a remote host using rsync. The src argument specifies the source directory on your local system, and the dest argument specifies the destination directory on the remote host. The rsync_opts argument is used to pass additional options to rsync, in this case, deleting files that have been deleted locally and excluding files with a .tmp extension. The delete argument is set to yes to specify that files that have been deleted on the remote host should also be deleted on the local host.
